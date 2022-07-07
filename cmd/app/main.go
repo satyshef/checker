@@ -49,6 +49,7 @@ func main() {
 		return
 	}
 
+	//Получаем список профилей в алфовитном порядке
 	profList := profile.GetList(profileDir, profile.SORT_ALPHABET)
 	for n, phone := range profList {
 		fmt.Printf("#%d\n", n+1)
