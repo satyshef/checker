@@ -1,0 +1,4 @@
+#!/bin/bash
+
+find $1 -name \client.log -type f -delete
+find $1 -name \client.log.old -type f -delete

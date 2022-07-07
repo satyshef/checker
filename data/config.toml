@@ -1,0 +1,17 @@
+[[mailings]]
+enable = false
+leave = true
+chat = "obmen_valut_dn"
+#chat = "obmen_valut_dpr"
+message = "data/phrase.csv"
+
+[[reports]]
+enable = false
+chat = "group8274"
+message = "data/report.csv"
+
+
+[[reports]]
+enable = true
+chat = "obmen_valut_dn"
+message = "data/report.csv"
