@@ -1,6 +1,6 @@
 ARG APP_NAME="checker"
 ARG APP_DIR="/app"
-ARG CONF_NAME="config.toml"
+ARG CONF_NAME="collector.config.toml"
 
 
 
