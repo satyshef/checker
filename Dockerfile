@@ -1,7 +1,6 @@
 ARG APP_NAME="checker"
 ARG APP_DIR="/app"
-ARG CONF_NAME="config.toml"
-
+ARG DATA_DIR="data"
 
 
 FROM golang:1.18-alpine3.15 AS builder
@@ -27,25 +26,22 @@ RUN apk add git && \
 COPY . .
 RUN  go mod tidy && make -e APP_PATH=${APP_NAME}
 
-#RUN go build --ldflags "-extldflags '-static -L/usr/local/lib -ltdjson_static -ltdjson_private -ltdclient -ltdcore -ltdactor -ltddb -ltdsqlite -ltdnet -ltdutils -ldl -lm -lssl -lcrypto -lstdc++ -lz'" -o tebot cmd/app/main.go
-
 # finish
 FROM alpine:3.15
 ARG APP_NAME
 ARG APP_DIR
-ARG CONF_NAME
+ARG DATA_DIR
 
-ENV APP_PATH=${APP_DIR}/${APP_NAME}
-ENV GONFIG_PATH=${APP_DIR}/data/${CONF_NAME}
+#ENV APP_PATH=${APP_DIR}/${APP_NAME}
+#ENV GONFIG_PATH=${APP_DIR}/data/${CONF_NAME}
 
 WORKDIR ${APP_DIR}
 
-COPY --from=builder ${APP_DIR}/data/ ./data
-COPY --from=builder ${APP_DIR}/data/${CONF_NAME} ${GONFIG_PATH}
-COPY --from=builder ${APP_DIR}/${APP_NAME} ${APP_PATH}
+COPY --from=builder ${APP_DIR}/${APP_NAME} ${APP_NAME}
+COPY --from=builder ${APP_DIR}/${DATA_DIR} ${DATA_DIR}
+COPY --from=builder ${APP_DIR}/entrypoint.sh .
 #COPY --from=builder ${APP_DIR}/profiles ${APP_DIR}/profiles
 
-RUN apk add libstdc++
-EXPOSE 7070
-CMD ${APP_PATH} "-c" ${GONFIG_PATH}
-#CMD [ ${APP_PATH}, "-c", ${CONF_PATH} ]
+RUN mkdir profiles && chmod +x entrypoint.sh && apk add libstdc++
+
+CMD [ "./entrypoint.sh" ]

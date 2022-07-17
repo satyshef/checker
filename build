@@ -14,5 +14,5 @@ if [ ! -z "(docker images | grep $IMAGE_NAME)" ];then
         docker rmi $IMAGE_NAME
 fi
 
-docker build --build-arg APP_NAME=checker  --build-arg CONF_NAME=config.toml -t $IMAGE_NAME .
+docker build --build-arg APP_NAME=checker  --build-arg DATA_DIR=data -t $IMAGE_NAME .
 docker image prune --filter label=stage=builder -f
