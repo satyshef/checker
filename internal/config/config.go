@@ -8,8 +8,10 @@ import (
 )
 
 type Config struct {
-	Mailings []Mailing `toml:"mailings"`
-	Reports  []Report  `toml:"reports"`
+	Mailings  []Mailing `toml:"mailings"`
+	Reports   []Report  `toml:"reports"`
+	Joins     []Join    `toml:"joins"`
+	Collector `toml:"collector"`
 }
 
 type Mailing struct {
@@ -23,6 +25,16 @@ type Report struct {
 	Enable  bool   `toml:"enable"`
 	Chat    string `toml:"chat"`
 	Message string `toml:"message"`
+}
+
+type Join struct {
+	Enable bool   `toml:"enable"`
+	Chat   string `toml:"chat"`
+}
+
+type Collector struct {
+	Enable   bool   `toml:"enable"`
+	Receiver string `toml:"receiver"`
 }
 
 func LoadConfig(configPath string) *Config {

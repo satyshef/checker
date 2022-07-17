@@ -1,0 +1,7 @@
+[[mailings]]
+enable = true
+leave = false
+#chat = "retrust_krsk"
+chat = "retrust_spb"
+message = "data/retrust.phrase.csv"
+

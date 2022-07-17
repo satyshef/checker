@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"log"
 	"math/rand"
@@ -23,6 +24,44 @@ func completeTask(b *tdbot.Bot) *tdlib.Error {
 		sendFriendMessage(human)
 	*/
 
+	if conf.Collector != (config.Collector{}) && conf.Collector.Enable {
+		b.Logger.Infoln("Start Collect...")
+		for {
+			msgs, err := bot.GetNewMessages(1, 99)
+			if err != nil {
+				b.Logger.Errorln(err)
+				os.Exit(1)
+			}
+
+			if len(msgs) == 0 {
+				b.Logger.Errorln("No Messages")
+				break
+			}
+			for _, m := range msgs {
+				if m.Content == nil {
+					continue
+				}
+				if m.Content.GetMessageContentEnum() == tdlib.MessageTextType {
+					uniMessage, err := generateUnimes(b, &m)
+					if err != nil {
+						return err.(*tdlib.Error)
+					}
+					json_data, err := json.Marshal(uniMessage)
+					if err != nil {
+						log.Fatal(err)
+					}
+					//fmt.Printf("%#v\n\n", uniMessage)
+					//fmt.Println("---------------------------------------")
+					send(conf.Collector.Receiver, json_data)
+				} else {
+					fmt.Printf("Unknow message type : %s\n\n", m.Content.GetMessageContentEnum())
+				}
+			}
+			time.Sleep(time.Second * 2)
+		}
+
+	}
+
 	//Рассылка
 	for _, m := range conf.Mailings {
 		if !m.Enable {
@@ -42,7 +81,7 @@ func completeTask(b *tdbot.Bot) *tdlib.Error {
 		_, err := bot.SendMessageToChat(m.Chat, msg, m.Leave)
 		if err != nil {
 			//return err
-			fmt.Printf("Send to chat error : %s\n", err)
+			bot.Logger.Errorf("Send to chat error : %s\n", err)
 			break
 		}
 	}
@@ -52,7 +91,25 @@ func completeTask(b *tdbot.Bot) *tdlib.Error {
 		if !r.Enable {
 			continue
 		}
-		sendReport(r)
+		err := sendReport(r)
+		if err != nil {
+			bot.Logger.Errorf("Report to chat error : %s\n", err)
+			break
+		}
+		bot.Logger.Infof("Report to chat %s - SUCCESS\n", r.Chat)
+	}
+
+	// присоединиться к чату
+	for _, j := range conf.Joins {
+		if !j.Enable {
+			continue
+		}
+		_, err := bot.GetChat(j.Chat, true)
+		if err != nil {
+			bot.Logger.Errorf("Join to chat error : %s\n", err)
+			break
+		}
+		bot.Logger.Infof("Join to chat %s - SUCCESS\n", j.Chat)
 	}
 
 	return nil
@@ -90,6 +147,7 @@ func receiveMessage(h *mimicry.Human, friends []int32) {
 }
 */
 
+// Отправить жалобу
 func sendReport(r config.Report) *tdlib.Error {
 
 	chat, err := bot.GetChat(r.Chat, false)
@@ -108,7 +166,7 @@ func sendReport(r config.Report) *tdlib.Error {
 	if msg == "" {
 		return tdlib.NewError(tdbot.ErrorCodeSystem, "EMPTY_MESSAGE", "")
 	}
-	reason := tdlib.NewChatReportReasonCustom(msg)
+	reason := tdlib.NewChatReportReasonCustom()
 	//reason := tdlib.NewChatReportReasonSpam()
 	_, e := bot.Client.ReportChat(chat.ID, reason, []int64{chat.LastMessage.ID})
 	if e != nil {
@@ -117,6 +175,8 @@ func sendReport(r config.Report) *tdlib.Error {
 	fmt.Println("Report OK")
 	return nil
 }
+
+// ========================= OLD METHODS ===================================
 
 //Отправить сообщение одному из друзей
 func sendFriendMessage(h *mimicry.Human) {

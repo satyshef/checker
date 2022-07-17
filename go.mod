@@ -6,12 +6,11 @@ go 1.18
 
 //replace github.com/satyshef/tdbot => ../tdbot
 
-//replace github.com/satyshef/tdbot/chat => ../../telegram/tdbot/chat
-
 require (
 	github.com/BurntSushi/toml v1.1.0
-	github.com/satyshef/tdbot v0.2.36
-	github.com/satyshef/tdlib v0.2.24
+	github.com/satyshef/mslib/unimes v0.0.0-20220525151958-4576b99c5016
+	github.com/satyshef/tdbot v0.2.37
+	github.com/satyshef/tdlib v0.2.25
 )
 
 require (

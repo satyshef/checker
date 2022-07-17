@@ -30,13 +30,13 @@ func init() {
 	flag.StringVar(&profileDir, "p", "./profiles", "Путь к директории с профилями")
 	flag.BoolVar(&useMimicry, "m", false, "Использовать мимикрию")
 	flag.IntVar(&interval, "i", 0, "Интервал перебора профилей (сек)")
+	flag.Parse()
 	conf = config.LoadConfig(configPath)
 	stopProcess = make(chan bool)
+	profile.AddTail(&profileDir)
 }
 
 func main() {
-	flag.Parse()
-	profile.AddTail(&profileDir)
 
 	//если указанный путь и есть профиль
 	if profile.IsProfile(profileDir) {
@@ -50,7 +50,7 @@ func main() {
 	}
 
 	//Получаем список профилей в алфовитном порядке
-	profList := profile.GetList(profileDir, profile.SORT_ALPHABET)
+	profList := profile.GetList(profileDir, profile.SORT_TIME_ASC)
 	for n, phone := range profList {
 		fmt.Printf("#%d\n", n+1)
 		err := checkProf(profileDir + phone)
