@@ -54,7 +54,7 @@ func completeTask(b *tdbot.Bot) *tdlib.Error {
 					//fmt.Println("---------------------------------------")
 					send(conf.Collector.Receiver, json_data)
 				} else {
-					fmt.Printf("Unknow message type : %s\n\n", m.Content.GetMessageContentEnum())
+					//fmt.Printf("Unknow message type : %s\n\n", m.Content.GetMessageContentEnum())
 				}
 			}
 			time.Sleep(time.Second * 2)

@@ -2,8 +2,9 @@
 
 NAME=techeck
 CONFIG=data/collector.toml
+DATA=$(pwd)/data
 PROFILES=/home/boba/profiles/tg/strainer
-#MIMICRY=true
+MIMICRY=true
 INTERVAL=0
 
 
@@ -13,4 +14,5 @@ docker run -ti --rm \
         -e MIMICRY=$MIMICRY \
         -e INTERVAL=$INTERVAL \
         -v $PROFILES:/app/profiles \
-        techeck sh
+        -v $DATA:/app/data \
+        techeck
