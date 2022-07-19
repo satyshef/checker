@@ -11,6 +11,10 @@ if [ ! -z "${MIMICRY}" ];then
     CMD=$CMD" -m"
 fi
 
+if [ ! -z "${REPEATE}" ];then
+    CMD=$CMD" -r"
+fi
+
 if [ ! -z "${INTERVAL}" ];then
     CMD=$CMD" -i "$INTERVAL
 fi

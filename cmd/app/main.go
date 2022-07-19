@@ -20,6 +20,7 @@ var (
 	useMimicry  bool
 	bot         *tdbot.Bot
 	runProcess  bool
+	repeate     bool
 	stopProcess chan bool
 	countGood   int
 	lockAccs    []string
@@ -30,6 +31,7 @@ func init() {
 	flag.StringVar(&configPath, "c", "./data/config.toml", "Файл конфигурации")
 	flag.StringVar(&profileDir, "p", "./profiles", "Путь к директории с профилями")
 	flag.BoolVar(&useMimicry, "m", false, "Использовать мимикрию")
+	flag.BoolVar(&repeate, "r", false, "Повторять в цикле")
 	flag.IntVar(&interval, "i", 0, "Интервал перебора профилей (сек)")
 	flag.Parse()
 	conf = config.LoadConfig(configPath)
@@ -50,27 +52,32 @@ func main() {
 		return
 	}
 
-	//Получаем список профилей в алфовитном порядке
-	profList := profile.GetList(profileDir, profile.SORT_TIME_ASC)
-	for n, phone := range profList {
-		fmt.Printf("#%d\n", n+1)
-		err := checkProf(profileDir + phone)
-		if err == nil {
-			fmt.Printf("Success\n\n\n")
-		} else {
-			if err.Error() == "Profile is already in use" {
-				lockAccs = append(lockAccs, profileDir+phone)
+	for {
+		//Получаем список профилей
+		profList := profile.GetList(profileDir, profile.SORT_TIME_ASC)
+		for n, phone := range profList {
+			fmt.Printf("#%d\n", n+1)
+			err := checkProf(profileDir + phone)
+			if err == nil {
+				fmt.Printf("Success\n\n\n")
+			} else {
+				if err.Error() == "Profile is already in use" {
+					lockAccs = append(lockAccs, profileDir+phone)
+				}
 			}
 		}
-	}
 
-	fmt.Println("Finish:")
-	fmt.Println("Locked:")
-	for _, a := range lockAccs {
-		fmt.Println(a)
-	}
+		fmt.Println("Finish:")
+		fmt.Println("Locked:")
+		for _, a := range lockAccs {
+			fmt.Println(a)
+		}
 
-	fmt.Printf("Good - %d\n All - %d\n", countGood, len(profList))
+		fmt.Printf("Good - %d\n All - %d\n", countGood, len(profList))
+		if !repeate || countGood == 0 {
+			break
+		}
+	}
 }
 
 func checkProf(profDir string) error {
