@@ -11,9 +11,9 @@ import (
 	"time"
 
 	"github.com/satyshef/checker/internal/config"
+	"github.com/satyshef/go-tdlib/tdlib"
 	"github.com/satyshef/tdbot"
 	"github.com/satyshef/tdbot/mimicry"
-	"github.com/satyshef/tdlib"
 )
 
 func completeTask(b *tdbot.Bot) *tdlib.Error {
@@ -168,7 +168,7 @@ func sendReport(r config.Report) *tdlib.Error {
 	}
 	reason := tdlib.NewChatReportReasonCustom()
 	//reason := tdlib.NewChatReportReasonSpam()
-	_, e := bot.Client.ReportChat(chat.ID, reason, []int64{chat.LastMessage.ID})
+	_, e := bot.Client.ReportChat(chat.ID, []int64{chat.LastMessage.ID}, reason, msg)
 	if e != nil {
 		return e.(*tdlib.Error)
 	}

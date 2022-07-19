@@ -7,9 +7,10 @@ import (
 	"time"
 
 	"github.com/satyshef/checker/internal/config"
+	tdc "github.com/satyshef/go-tdlib/client"
+	"github.com/satyshef/go-tdlib/tdlib"
 	"github.com/satyshef/tdbot"
 	"github.com/satyshef/tdbot/profile"
-	"github.com/satyshef/tdlib"
 )
 
 var (
@@ -167,14 +168,14 @@ func checkProf(profDir string) error {
 }
 
 // обработчик событий Телеграм клиента
-func eventCatcher(tdEvent *tdlib.SystemEvent) *tdlib.Error {
+func eventCatcher(tdEvent *tdc.SystemEvent) *tdlib.Error {
 	//bot.Logger.Errorf("New Event %#v\n\n", tdEvent)
 	switch tdEvent.Type {
-	case tdlib.EventTypeRequest:
+	case tdc.EventTypeRequest:
 		return requestHandler(tdEvent)
-	case tdlib.EventTypeResponse:
+	case tdc.EventTypeResponse:
 		return responseHandler(tdEvent)
-	case tdlib.EventTypeError:
+	case tdc.EventTypeError:
 		return errorHandler(tdEvent.Data.(tdlib.Error))
 	}
 
@@ -182,13 +183,13 @@ func eventCatcher(tdEvent *tdlib.SystemEvent) *tdlib.Error {
 }
 
 // оброботчик запросов к серверу Телеграм
-func requestHandler(tdEvent *tdlib.SystemEvent) *tdlib.Error {
+func requestHandler(tdEvent *tdc.SystemEvent) *tdlib.Error {
 	//bot.Logger.Errorf("New Request %#v\n\n", tdEvent)
 	return nil
 }
 
 //Обработчик ответов на запросы Telegram client (не используется)
-func responseHandler(tdEvent *tdlib.SystemEvent) *tdlib.Error {
+func responseHandler(tdEvent *tdc.SystemEvent) *tdlib.Error {
 	var err *tdlib.Error
 	//bot.Logger.Infof("Response %#v\n\n", tdEvent)
 	/*
@@ -236,9 +237,9 @@ func responseHandler(tdEvent *tdlib.SystemEvent) *tdlib.Error {
 //Обработчик ошибок Telegram client. Пересмотреть логику функции
 func errorHandler(e tdlib.Error) *tdlib.Error {
 	switch e.Code {
-	case tdlib.ErrorCodeFloodLock:
+	case tdc.ErrorCodeFloodLock:
 		return bot.ProfileToSpam()
-	case tdlib.ErrorCodeTimeout:
+	case tdc.ErrorCodeTimeout:
 		fmt.Println("TIMEOUT")
 		bot.Restart()
 	default:

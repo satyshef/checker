@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/satyshef/go-tdlib/tdlib"
 	"github.com/satyshef/mslib/unimes"
 	"github.com/satyshef/tdbot"
-	"github.com/satyshef/tdlib"
 )
 
 func generateUnimes(b *tdbot.Bot, msg *tdlib.Message) (*unimes.UniversalMessage, error) {

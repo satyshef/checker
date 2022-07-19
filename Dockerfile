@@ -8,11 +8,11 @@ LABEL stage=builder
 ARG APP_NAME
 ARG APP_DIR
 
-COPY --from=wcsiu/tdlib:1.8-alpine /usr/local/include/td /usr/local/include/td
-COPY --from=wcsiu/tdlib:1.8-alpine /usr/local/lib/libtd* /usr/local/lib/
-COPY --from=wcsiu/tdlib:1.8-alpine /usr/lib/libssl.a /usr/local/lib/libssl.a
-COPY --from=wcsiu/tdlib:1.8-alpine /usr/lib/libcrypto.a /usr/local/lib/libcrypto.a
-COPY --from=wcsiu/tdlib:1.8-alpine /lib/libz.a /usr/local/lib/libz.a
+COPY --from=satyshef/tdlib:1.8.3-alpine3.15 /usr/local/include/td /usr/local/include/td
+COPY --from=satyshef/tdlib:1.8.3-alpine3.15 /usr/local/lib/libtd* /usr/local/lib/
+COPY --from=satyshef/tdlib:1.8.3-alpine3.15 /usr/lib/libssl.a /usr/local/lib/libssl.a
+COPY --from=satyshef/tdlib:1.8.3-alpine3.15 /usr/lib/libcrypto.a /usr/local/lib/libcrypto.a
+COPY --from=satyshef/tdlib:1.8.3-alpine3.15 /lib/libz.a /usr/local/lib/libz.a
 RUN apk add build-base
 
 WORKDIR ${APP_DIR}
